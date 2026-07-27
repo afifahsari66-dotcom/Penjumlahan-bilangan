@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Kuis Matematika: Penjumlahan Bilangan Bulat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div id="app" class="max-w-2xl mx-auto bg-white p-8 rounded shadow">
+        <h1 class="text-2xl font-bold mb-6 text-center">Kuis Penjumlahan Bilangan Bulat</h1>
+        
+        <div id="identity-form" class="space-y-4">
+            <input type="text" id="nama" placeholder="Nama Lengkap" class="w-full p-2 border rounded">
+            <input type="text" id="kelas" placeholder="Kelas" class="w-full p-2 border rounded">
+            <input type="number" id="no_presensi" placeholder="Nomor Presensi" class="w-full p-2 border rounded">
+            <button onclick="startQuiz()" class="w-full bg-blue-600 text-white p-2 rounded">Mulai Kuis</button>
+        </div>
+
+        <div id="quiz-area" class="hidden">
+            <div id="question-container"></div>
+            <button onclick="submitQuiz()" class="mt-6 w-full bg-green-600 text-white p-2 rounded">Selesai & Lihat Skor</button>
+        </div>
+
+        <div id="result-area" class="hidden text-center">
+            <h2 class="text-xl font-bold">Hasil Kuis</h2>
+            <p id="final-score" class="text-3xl my-4"></p>
+            <button onclick="exportToExcel()" class="bg-yellow-500 text-white p-2 rounded">Simpan ke CSV (Excel)</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {q: "5 + (-3)", a: 2}, {q: "-8 + 4", a: -4}, {q: "-7 + (-2)", a: -9}, {q: "10 + (-10)", a: 0}, {q: "-5 + 12", a: 7},
+            {q: "15 + (-20)", a: -5}, {q: "-3 + (-3)", a: -6}, {q: "9 + (-4)", a: 5}, {q: "-10 + 20", a: 10}, {q: "-1 + (-9)", a: -10},
+            {q: "25 + (-5)", a: 20}, {q: "-12 + 12", a: 0}, {q: "4 + (-11)", a: -7}, {q: "-20 + 8", a: -12}, {q: "-6 + (-4)", a: -10},
+            {q: "18 + (-7)", a: 11}, {q: "-15 + 5", a: -10}, {q: "2 + (-8)", a: -6}, {q: "-9 + 9", a: 0}, {q: "-13 + (-7)", a: -20}
+        ];
+
+        let userScore = 0;
+
+        function startQuiz() {
+            document.getElementById('identity-form').classList.add('hidden');
+            document.getElementById('quiz-area').classList.remove('hidden');
+            let container = document.getElementById('question-container');
+            questions.forEach((item, index) => {
+                container.innerHTML += `<div class="mb-4">
+                    <p>${index + 1}. ${item.q} = ?</p>
+                    <input type="number" class="answer-input border p-1 rounded" data-index="${index}">
+                </div>`;
+            });
+        }
+
+        function submitQuiz() {
+            let inputs = document.querySelectorAll('.answer-input');
+            inputs.forEach(input => {
+                if(parseInt(input.value) === questions[input.dataset.index].a) userScore++;
+            });
+            document.getElementById('quiz-area').classList.add('hidden');
+            document.getElementById('result-area').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `Skor Anda: ${userScore} / 20`;
+        }
+
+        function exportToExcel() {
+            const nama = document.getElementById('nama').value;
+            const data = `Nama,Kelas,No,Skor\n${nama},${document.getElementById('kelas').value},${document.getElementById('no_presensi').value},${userScore}`;
+            const blob = new Blob([data], {type: 'text/csv'});
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'hasil_kuis.csv');
+            a.click();
+        }
+    </script>
+</body>
+</html>
